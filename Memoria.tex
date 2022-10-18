@@ -1,0 +1,111 @@
+\documentclass[
+12pt, 
+spanish, 
+singlespacing,
+headsepline
+]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{underscore}
+\usepackage{graphicx}
+%Path relative to the .tex file containing the \includegraphics command
+\graphicspath{ {./images} }
+%\usepackage[export]{adjustbox} % Enable option "frame" for figures
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\newcommand{\image}[2]{
+\begin{figure}[H]
+	\caption{#1}
+	\centering
+	\includegraphics[width=1\textwidth]{#2}
+\end{figure}
+}
+\usepackage{xcolor}
+\definecolor{light-gray}{gray}{0.95}
+\newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
+
+\author{Marcos Gutiérrez Alonso}
+\title{Memoria de las prácticas de Inteligencia de Negocio}
+\begin{document}
+\begin{titlepage}
+	\maketitle
+	\tableofcontents
+\end{titlepage}
+
+\section{Práctica 1.0: Scipy}
+\subsection{Scipy 1}
+Para añadir más ruido normalizado (pasando de varianza 16 a 64) sólo hay que cambiar el parámetro \texttt{scale}, y para representar las tres imágenes hay que poner en los subplots los valores 131, 132 y 133 (1 fila, 3 columnas y la posición de cada imagen).
+
+El resultado es el siguiente:
+\image{Diferentes cantidades de ruido normalizado}{Figure\_1.png}
+
+\subsection{Scipy 2}
+En esta parte hay que cambiar la distribución a una uniforme.
+La distribución inicial es \texttt{Pareto} y hay que cambiarla a \texttt{Uniform}.
+
+El resultado es el siguiente:
+\image{Una distribución uniforme}{Figure_2.png}
+
+\subsection{Scipy 3}
+Tras cambiar al test de Wilcoxon: 
+
+El p-valor es: $0.007531$ $\Rightarrow$ Son significativamente diferentes $\Rightarrow$ Hay uno que es mejor
+
+\subsection{Scipy 4}
+Estimación kernel (ajuste automático de la distribución), que es una suma ponderada de los puntos en un entorno suave del punto en el que estoy, donde la ponderación depende de la distancia al punto. En otras palabras: Una \textbf{convolución}.
+
+\section{Práctica 1.1: Sklearn}
+\subsection{Sklearn 1: Univariate}
+
+\image{Comparación de diferentes métodos de ajuste usando una variable}{Figure_3.png}
+
+Superposición (comparación) de los diferentes métodos:
+\image{Comparación de diferentes métodos por separado}{Figure_4-1.png}
+
+\image{Comparación de diferentes métodos en la misma gráfica}{Figure_4-2.png}
+
+Parece que Random Forest obtiene los resultados más ajustados.
+
+Probemos con distintos kernels de SVR:
+
+\image{SVR con el kernel poly}{Figure_5-poly.png}
+\image{SVR con el kernel sigmoid}{Figure_5-sigmoid.png}
+
+\subsection{Sklearn 2: Multivariate (ejercicio 7)}
+\begin{itemize}
+\item Con un dato: SVR mejor que LINEAL mejor que RNF
+\item Con todos los datos: RNF mejor que LINEAL mejor que SVR	
+\end{itemize}
+
+\section{Práctica 1.2: Pandas}
+\subsection{Pandas 1, 2, 3 y 4}
+Aprendimos a cargar CSVs, cuya única ventaja frente a un excel es que el CSV no tiene límite de filas. En cambio, con el excel sabemos el tipo de cada columna.
+
+Luego manejamos los DataFrames y a hacer estadísticas con sus valores, teniendo en cuenta los valores que son NaN o None. Miramos cómo borrar filas y columnas que contienen valores nulos.
+
+\image{Resumen del dataframe en Pandas, cargado desde Churn\string_Modelling.xlsx}{Figure_6.png}
+
+\section{Práctica 1.3: Más Pandas}
+\subsection{Pandas 5}
+
+\section{Práctica 2: Selección de características}
+En esta práctica tenemos tres datasets:
+\begin{itemize}
+\item iris
+\item letters
+\item X
+\end{itemize}
+
+X lo he convertido a un DataFrame (\code{pd.DataFrame(X)}) para poder manejarlo igual que los otros dos dataset.
+
+Como en esta práctica habrá que repetir un mismo proceso para los tres datasets, intentaré abstraer las funcionalidades a métodos independientes.
+
+\subsection{Eliminación de variables con poca varianza}
+\image{Llamada a la función de eliminación de variables con poca varianza}{Figure_7.png}
+\image{Función de eliminación de variables con poca varianza}{Figure_7.1.png}
+
+\end{document}
