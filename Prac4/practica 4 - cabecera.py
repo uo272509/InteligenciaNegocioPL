@@ -65,6 +65,7 @@ def LFA_ej2(digits):
     fact_2c = FactorAnalysis(n_components=2)
     X_factor = fact_2c.fit_transform(digits.data)
     plt.scatter(X_factor[:, 0], X_factor[:, 1], c=digits.target, alpha=0.8, edgecolors='none')
+    plt.title("Ejercicio 2: LFA")
     plt.show()
 
 
@@ -74,6 +75,7 @@ def MDS_ej3(digits):
     pos = mds.fit(similarities).embedding_
     plt.scatter(pos[:, 0], pos[:, 1], c=digits.target, alpha=0.8,
                 edgecolors='none')
+    plt.title("Ejercicio 3: MDS")
     plt.show()
 
 
@@ -82,6 +84,7 @@ def LLE_ej4(digits):
     pos, err = locally_linear_embedding(data, n_neighbors=2, n_components=2)
     plt.scatter(pos[:, 0], pos[:, 1], c=digits.target, alpha=0.8,
                 edgecolors='none')
+    plt.title("Ejercicio 4: LLE")
     plt.show()
 
 
@@ -92,6 +95,7 @@ def t_SNE(digits):
     tsne_res = tsne.fit_transform(pca_32)
     plt.figure(figsize=(16, 10))
     sns.scatterplot(x=tsne_res[:, 0], y=tsne_res[:, 1], hue=digits.target, palette=sns.hls_palette(10), legend='full')
+    plt.title("Parte opcional 1: PCA + t-SNE")
     plt.show()
 
 
