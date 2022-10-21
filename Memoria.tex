@@ -26,7 +26,7 @@ headsepline
 }
 \usepackage{xcolor}
 \definecolor{light-gray}{gray}{0.95}
-\newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
+\newcommand{\code}[1]{\colorbox{light-gray}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut  \texttt{#1}\strut}}}
 
 \author{Marcos Gutiérrez Alonso}
 \title{Memoria de las prácticas de Inteligencia de Negocio}
@@ -41,14 +41,14 @@ headsepline
 Para añadir más ruido normalizado (pasando de varianza 16 a 64) sólo hay que cambiar el parámetro \texttt{scale}, y para representar las tres imágenes hay que poner en los subplots los valores 131, 132 y 133 (1 fila, 3 columnas y la posición de cada imagen).
 
 El resultado es el siguiente:
-\image{Diferentes cantidades de ruido normalizado}{Figure\_1.png}
+\image{Diferentes cantidades de ruido normalizado}{pl1/Figure\_1.png}
 
 \subsection{Scipy 2}
 En esta parte hay que cambiar la distribución a una uniforme.
 La distribución inicial es \texttt{Pareto} y hay que cambiarla a \texttt{Uniform}.
 
 El resultado es el siguiente:
-\image{Una distribución uniforme}{Figure_2.png}
+\image{Una distribución uniforme}{pl1/Figure_2.png}
 
 \subsection{Scipy 3}
 Tras cambiar al test de Wilcoxon: 
@@ -61,19 +61,19 @@ Estimación kernel (ajuste automático de la distribución), que es una suma pon
 \section{Práctica 1.1: Sklearn}
 \subsection{Sklearn 1: Univariate}
 
-\image{Comparación de diferentes métodos de ajuste usando una variable}{Figure_3.png}
+\image{Comparación de diferentes métodos de ajuste usando una variable}{pl1/Figure_3.png}
 
 Superposición (comparación) de los diferentes métodos:
-\image{Comparación de diferentes métodos por separado}{Figure_4-1.png}
+\image{Comparación de diferentes métodos por separado}{pl1/Figure_4-1.png}
 
-\image{Comparación de diferentes métodos en la misma gráfica}{Figure_4-2.png}
+\image{Comparación de diferentes métodos en la misma gráfica}{pl1/Figure_4-2.png}
 
 Parece que Random Forest obtiene los resultados más ajustados.
 
 Probemos con distintos kernels de SVR:
 
-\image{SVR con el kernel poly}{Figure_5-poly.png}
-\image{SVR con el kernel sigmoid}{Figure_5-sigmoid.png}
+\image{SVR con el kernel poly}{pl1/Figure_5-poly.png}
+\image{SVR con el kernel sigmoid}{pl1/Figure_5-sigmoid.png}
 
 \subsection{Sklearn 2: Multivariate (ejercicio 7)}
 \begin{itemize}
@@ -87,7 +87,7 @@ Aprendimos a cargar CSVs, cuya única ventaja frente a un excel es que el CSV no
 
 Luego manejamos los DataFrames y a hacer estadísticas con sus valores, teniendo en cuenta los valores que son NaN o None. Miramos cómo borrar filas y columnas que contienen valores nulos.
 
-\image{Resumen del dataframe en Pandas, cargado desde Churn\string_Modelling.xlsx}{Figure_6.png}
+\image{Resumen del dataframe en Pandas, cargado desde Churn\string_Modelling.xlsx}{pl2/Figure_6.png}
 
 \section{Práctica 1.3: Más Pandas}
 \subsection{Pandas 5}
@@ -105,7 +105,28 @@ X lo he convertido a un DataFrame (\code{pd.DataFrame(X)}) para poder manejarlo 
 Como en esta práctica habrá que repetir un mismo proceso para los tres datasets, intentaré abstraer las funcionalidades a métodos independientes.
 
 \subsection{Eliminación de variables con poca varianza}
-\image{Llamada a la función de eliminación de variables con poca varianza}{Figure_7.png}
-\image{Función de eliminación de variables con poca varianza}{Figure_7.1.png}
+\image{Llamada a la función de eliminación de variables con poca varianza}{pl2/Figure_7.png}
+\image{Función de eliminación de variables con poca varianza}{pl2/Figure_7.1.png}
+
+\section{Práctica 3: Longitud de un cable}
+En esta práctica se nos da una tabla cuyas filas representan distintas poblaciones con las siguientes características:
+\begin{itemize}
+\item \textbf{N}: "Número de habitantes"
+\item \textbf{R}: "Radio de la población"
+\item \textit{Dos variables desconocidas}
+\item \textit{Dos variables aleatorias}
+\item \textbf{L}: "Longitud del cable" (la solución)
+\end{itemize}
+
+\subsection{Valores perdidos}
+El primer paso es eliminar los valores perdidos. Podríamos tratar de inputar los valores, pero por ahora simplemente eliminaremos todas las filas que contengan valores perdidos con el comando \code{cables.dropna(how='any', inplace=True)}. Esta decisión nos costará 47 filas de 490 (9.59\% de filas).
+
+\subsection{Normalización de datos}
+A continuación tendremos que normalizar los datos. Simplemente usaré el \code{MinMaxScaler().fit_transform(...)}, que debería de hacer que todos los valores estén entre 0 y 1, agrupando por columnas (es decir, que se normaliza cada columna independientemente de las demás).
+
+\subsection{Variables relevantes}
+El siguiente paso consiste en detectar las variables que son irrelevantes. He probado dos métodos para conseguir este fin: \code{SelectKBest(score_func=f_regression, k=...)} y \code{SelectPercentile(score_func=f_regression, percentile=0.1)}.
+
+\subsection{LinearModel y SelectKBest}
 
 \end{document}

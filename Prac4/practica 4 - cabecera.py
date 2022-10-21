@@ -1,10 +1,12 @@
 import math
 
-import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, FactorAnalysis
+from sklearn.manifold import MDS, locally_linear_embedding, TSNE
 from sklearn import datasets
 from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.metrics import euclidean_distances
+import seaborn as sns
 
 
 def PCAa(digits):
@@ -59,13 +61,59 @@ def PLAd_plot(digits, k=None):
     plt.show()
 
 
+def LFA_ej2(digits):
+    fact_2c = FactorAnalysis(n_components=2)
+    X_factor = fact_2c.fit_transform(digits.data)
+    plt.scatter(X_factor[:, 0], X_factor[:, 1], c=digits.target, alpha=0.8, edgecolors='none')
+    plt.show()
+
+
+def MDS_ej3(digits):
+    mds = MDS(n_components=2, dissimilarity="precomputed")
+    similarities = euclidean_distances(digits.data)
+    pos = mds.fit(similarities).embedding_
+    plt.scatter(pos[:, 0], pos[:, 1], c=digits.target, alpha=0.8,
+                edgecolors='none')
+    plt.show()
+
+
+def LLE_ej4(digits):
+    data = digits.data
+    pos, err = locally_linear_embedding(data, n_neighbors=2, n_components=2)
+    plt.scatter(pos[:, 0], pos[:, 1], c=digits.target, alpha=0.8,
+                edgecolors='none')
+    plt.show()
+
+
+def t_SNE(digits):
+    pca = PCA(n_components=32)
+    pca_32 = pca.fit_transform(digits.data)
+    tsne = TSNE(n_components=2, random_state=0)
+    tsne_res = tsne.fit_transform(pca_32)
+    plt.figure(figsize=(16, 10))
+    sns.scatterplot(x=tsne_res[:, 0], y=tsne_res[:, 1], hue=digits.target, palette=sns.hls_palette(10), legend='full')
+    plt.show()
+
+
 def main():
     digits = datasets.load_digits()
 
     # 1- PCA
     # PCAa(digits)
     # PCAb(digits)
-    PLAd_plot(digits)
+    # PLAd_plot(digits)
+
+    # 2- LFA
+    # LFA_ej2(digits)
+
+    # 3- MDS
+    # MDS_ej3(digits)
+
+    # 4- LLE
+    # LLE_ej4(digits)
+
+    # 5- t-SNE
+    t_SNE(digits)
 
 
 if __name__ == '__main__':

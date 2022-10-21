@@ -64,9 +64,10 @@ def predict_model(model, X: Union[pd.DataFrame, np.ndarray], Y: Union[pd.DataFra
 def main(cables_filename):
     cables = pd.read_csv(cables_filename, sep=",", decimal=".", header=0)
 
+    print(cables.shape)
     # 1. Limpiar el dataset
     cables.dropna(how='any', inplace=True)
-
+    print(cables.shape)
     # 2. Escalar o normalizar las variables
     min_max_scaler = preprocessing.MinMaxScaler()
     c_scaled = min_max_scaler.fit_transform(cables)
