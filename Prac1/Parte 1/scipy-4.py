@@ -15,7 +15,9 @@ x = numpy.linspace(dataDiff.min(), dataDiff.max(), 1000)
 
 pdf = ss.norm.pdf(x, mean, std)
 kde = ss.gaussian_kde(dataDiff)  # Kernel Density Estimation
+cauchy = ss.cauchy.pdf(x, mean, std)
 
 plt.plot(x, pdf)
 plt.plot(x, kde(x))
+plt.plot(x, cauchy)
 plt.show()
