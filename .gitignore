@@ -4,5 +4,12 @@
 **/__pycache__/
 **/*.pdf
 **/*.odt
-**/*.tex.bak
 **/.DS_Store
+
+**/.xdp-*
+**/*.aux
+**/*.log
+**/*.tex.bak
+**/*.out
+**/.toc
+**/*.gz

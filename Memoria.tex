@@ -6,7 +6,11 @@ headsepline
 ]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
-\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,% hyperlinks will be coloured
+  linkcolor=blue,% hyperlink text will be blue
+}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -24,6 +28,13 @@ headsepline
 	\includegraphics[width=1\textwidth]{#2}
 \end{figure}
 }
+\newcommand{\smallimage}[2]{
+\begin{figure}[H]
+	\caption{#1}
+	\centering
+	\includegraphics[width=0.5\textwidth]{#2}
+\end{figure}
+}
 \usepackage{xcolor}
 \definecolor{light-gray}{gray}{0.95}
 \newcommand{\code}[1]{\colorbox{light-gray}{\parbox{\dimexpr\linewidth-2\fboxsep}{\strut  \texttt{#1}\strut}}}
@@ -33,33 +44,40 @@ headsepline
 \begin{document}
 \begin{titlepage}
 	\maketitle
+	{\hypersetup{linkcolor=black}
 	\tableofcontents
+	}
 \end{titlepage}
 
-\section{Práctica 1.0: Scipy}
-\subsection{Scipy 1}
+\section{Práctica 1}
+\subsection{Sesión 1}
+\subsubsection{Scipy 1}
 Para añadir más ruido normalizado (pasando de varianza 16 a 64) sólo hay que cambiar el parámetro \texttt{scale}, y para representar las tres imágenes hay que poner en los subplots los valores 131, 132 y 133 (1 fila, 3 columnas y la posición de cada imagen).
 
 El resultado es el siguiente:
 \image{Diferentes cantidades de ruido normalizado}{pl1/Figure\_1.png}
 
-\subsection{Scipy 2}
+\subsubsection{Scipy 2}
 En esta parte hay que cambiar la distribución a una uniforme.
 La distribución inicial es \texttt{Pareto} y hay que cambiarla a \texttt{Uniform}.
 
 El resultado es el siguiente:
 \image{Una distribución uniforme}{pl1/Figure_2.png}
 
-\subsection{Scipy 3}
+\subsubsection{Scipy 3}
 Tras cambiar al test de Wilcoxon: 
 
-El p-valor es: $0.007531$ $\Rightarrow$ Son significativamente diferentes $\Rightarrow$ Hay uno que es mejor
+El p-valor es: $0.007531$ $\Rightarrow$ Son significativamente diferentes $\Rightarrow$ Se puede deducir que hay uno que es mejor.
 
-\subsection{Scipy 4}
-Estimación kernel (ajuste automático de la distribución), que es una suma ponderada de los puntos en un entorno suave del punto en el que estoy, donde la ponderación depende de la distancia al punto. En otras palabras: Una \textbf{convolución}.
+\subsubsection{Scipy 4}
+\image{Ajustando una distribución de Cauchy a los datos anteriores (curva roja)}{pl1/Figure_4.png}
+Estimación kernel (ajuste automático de la distribución), que es una suma ponderada de los puntos en un entorno suave del punto en el que estoy, donde la ponderación depende de la distancia al punto. En otras palabras: Una convolución.
 
-\section{Práctica 1.1: Sklearn}
-\subsection{Sklearn 1: Univariate}
+\subsubsection{Scipy 5}
+\image{Bola de tamaño 1 para las distancias de Minkowski de órdenes 1, 2, 3 y 4}{pl1/Figure_6-Minkowski.png}
+
+\subsection{Sesión 2: Sklearn}
+\subsubsection{Sklearn 1: Univariate}
 
 \image{Comparación de diferentes métodos de ajuste usando una variable}{pl1/Figure_3.png}
 
@@ -75,23 +93,148 @@ Probemos con distintos kernels de SVR:
 \image{SVR con el kernel poly}{pl1/Figure_5-poly.png}
 \image{SVR con el kernel sigmoid}{pl1/Figure_5-sigmoid.png}
 
-\subsection{Sklearn 2: Multivariate (ejercicio 7)}
+Parece que en ningún caso SVR se acerca a los resultados que obtiene Random Forest Regressor. 
+
+\subsubsection{Sklearn 2: Multivariate (ejercicio 7)}
+\begin{center}
+\emph{Con una sola variable (KBest)}\\
+\begin{tabular}{|c|c|c|}
+\hline 
+Algoritmo & MSE & Score \\ 
+\hline 
+LIN & 34.5397 & 34.7053 \\ 
+\hline 
+SVR & 65.9781 & 65.8593 \\ 
+\hline 
+RNF & 21.5694 & 22.5548 \\ 
+\hline 
+\end{tabular} 
+\linebreak\linebreak\linebreak
+\emph{Con todas las variables}\\
+\begin{tabular}{|c|c|c|}
+\hline 
+Algoritmo & MSE & Score \\ 
+\hline 
+LIN & 34.5397 & 34.7053 \\ 
+\hline 
+SVR & 65.9781 & 65.8593 \\ 
+\hline 
+RNF & 21.5032 & 21.7837 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+El resultado esperado sería:
 \begin{itemize}
 \item Con un dato: SVR mejor que LINEAL mejor que RNF
 \item Con todos los datos: RNF mejor que LINEAL mejor que SVR	
 \end{itemize}
 
-\section{Práctica 1.2: Pandas}
-\subsection{Pandas 1, 2, 3 y 4}
+Sin embargo, tanto la regresión lineal como el SVR obtienen el mismo resultado usando una o todas las variables. En ambos casos es el Random Forest el que obtiene los mejores resultados. Cuando usamos una sóla variable obtiene menor error \textbf{y} mayor puntuación, por lo que se deduce que es el mejor \textit{approach}.
+
+\subsection{Sesión 3: Pandas}
 Aprendimos a cargar CSVs, cuya única ventaja frente a un excel es que el CSV no tiene límite de filas. En cambio, con el excel sabemos el tipo de cada columna.
 
 Luego manejamos los DataFrames y a hacer estadísticas con sus valores, teniendo en cuenta los valores que son NaN o None. Miramos cómo borrar filas y columnas que contienen valores nulos.
 
-\image{Resumen del dataframe en Pandas, cargado desde Churn\string_Modelling.xlsx}{pl2/Figure_6.png}
+\smallimage{Resumen del dataframe en Pandas, cargado desde Churn\string_Modelling.xlsx}{pl2/Figure_6.png}
 
-\section{Práctica 1.3: Más Pandas}
-\subsection{Pandas 5}
+Vamos a predecir \textbf{'EstimatedSalary'} (el salario estimado anual) y \textbf{'Exited'}  (si la persona continuó en la empresa o no).
 
+\subsubsection{Predecir el salario estimado}
+\paragraph{Eliminando todas las columnas con valores '\textit{NA}'}
+\begin{enumerate}
+\item Eliminamos todas las filas que contengan un valor '\textit{NA}': \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/c43eff60b8bcd5372c221600c31fed0eea01aec5/Prac1/Parte\%203/pandas-ejercicio-8.py\#L76}{pandas-ejercicio-8.py\#L76}
+
+\item Creamos la variable '\textit{X}' usando '\textit{loc[...]}' para seleccionar las columnas que nos interesan: \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/c43eff60b8bcd5372c221600c31fed0eea01aec5/Prac1/Parte\%203/pandas-ejercicio-8.py\#L35}{pandas-ejercicio-8.py\#L35}
+
+\item Creamos la variable '\textit{Y}' usando '\textit{loc[...]}' para seleccionar las columnas que nos interesan: \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/c43eff60b8bcd5372c221600c31fed0eea01aec5/Prac1/Parte\%203/pandas-ejercicio-8.py\#L38}{pandas-ejercicio-8.py\#L38}
+
+\item Hacemos tres modelos distintos, en este caso: \textit{LinearRegression, SVR (con kernel="poly") y RandomForestRegressor} 
+
+\item Comparamos el error cuadrático medio, el error medio y el \textit{Score} en cada uno de los modelos, usando validación cruzada:
+\end{enumerate}
+\begin{center}
+\emph{Errores de los distintos modelos}\\
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Modelo & MSE & ME & Score \\ 
+\hline 
+LinearRegression & 3.2998e+09 & \$57444.07 &  3305553891.77\\ 
+\hline 
+SVR & 3.3024e+09 & \$57466.40 & 3304003674.26\\ 
+\hline 
+RNF &5.0616e+08 & \$22498.06 & 3587619835.74 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+Gracias a estos resultados, podemos deducir que Random Forest obtiene el resultado más óptimo de entre los tres modelos, con un error medio de 22498.06 dólares. Este resultado está muy lejos de ser preciso u óptimo y deja bastante que desear. ¿Tal vez inputando valores haya un mejor resultado?
+
+\paragraph{Inputando datos: Substituyendo valores '\textit{NA}' por 0}
+\begin{enumerate}
+\item El primer problema que nos encontramos es que en las columnas cuyo tipo de dato es texto ("String"), no podemos inputar los valores perdidos con ceros. Por tanto, lo primero que tendremos que hacer será eliminar las filas en las que cualquiera de dichas columnas: \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/c43eff60b8bcd5372c221600c31fed0eea01aec5/Prac1/Parte\%203/pandas-ejercicio-8.py\#L81}{pandas-ejercicio-8.py\#L81}
+
+\item A continuación, inputamos los valores usando \texttt{\textit{fillna}} con \texttt{\textit{value=0}}: \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/c43eff60b8bcd5372c221600c31fed0eea01aec5/Prac1/Parte\%203/pandas-ejercicio-8.py\#L83}{pandas-ejercicio-8.py\#L83}
+
+\item Repetimos el anterior párrafo con los nuevos datos
+\end{enumerate}
+\begin{center}
+\emph{Errores de los distintos modelos}\\
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Modelo & MSE & ME & Score \\ 
+\hline 
+LinearRegression & 3.3054e+09 & \$57492.32 &  3310911961.98\\ 
+\hline 
+SVR & 3.3077e+09 & \$57513.03 & 3309502374.49\\ 
+\hline 
+RNF & 5.0460e+08 & \$22438.03 & 3590896089.41 \\ 
+\hline 
+\end{tabular} 
+\end{center}
+
+De nuevo es el Random Forest el que obtiene el mejor resultado. Si comparamos el error usando valores inputados (\$22438) con el error usando sólo los valores que no contienen un '\textit{NA}' (\$22498), podemos ver que Random Forest obtiene ligeramente mejores resultados al inputar los datos con ceros.
+
+Es probable que obtuvieramos aún mejores resultados si no inputasemos usando un cero, sino con la media o algún estadístico similar. Esta conclusión la saco a partir del resultado que obtuvieron la Regresión Lineal y el SVR, que con los valores inputados son peores.
+
+\subsubsection{Predecir la permanencia de los trabajadores}
+\paragraph{Eliminando todas las columnas con valores '\textit{NA}'}
+
+\begin{center}
+\emph{Puntuación de la predicción de la columna 'Exited'}\\
+\begin{tabular}{|c|c|}
+\hline 
+Modelo & Cross-Validation Score (10-fold) \\ 
+\hline 
+Naive Bayes & 0.2166\\ 
+\hline 
+Quadratic Discriminant Analysis & 0.1638\\ 
+\hline 
+5 Nearest Neighbors & 0.2335 \\ 
+\hline 
+\end{tabular}
+\end{center}
+
+\paragraph{Inputando datos: Substituyendo valores '\textit{NA}' por 0}
+\begin{center}
+\emph{Puntuación de la predicción de la columna 'Exited'}\\
+\begin{tabular}{|c|c|}
+\hline 
+Modelo & Cross-Validation Score (10-fold) \\ 
+\hline 
+Naive Bayes & 0.2165\\ 
+\hline 
+Quadratic Discriminant Analysis & 0.1643\\ 
+\hline 
+5 Nearest Neighbors & 0.2336 \\ 
+\hline 
+\end{tabular}
+\end{center}
+
+Podemos ver que, excepto Naive Bayes, se obtienen resultados ligeramente mejores cuando inputamos valores perdidos.\\
+Además, 5NN (5-Nearest Neighbors) obtiene el mejor resultado en ambos casos. De todas formas, esta puntuación tan baja nos indica que en la práctica no se podría predecir valores con ningún tipo de confianza.
+
+\newpage
 \section{Práctica 2: Selección de características}
 En esta práctica tenemos tres datasets:
 \begin{itemize}
@@ -105,8 +248,8 @@ X lo he convertido a un DataFrame (\code{pd.DataFrame(X)}) para poder manejarlo 
 Como en esta práctica habrá que repetir un mismo proceso para los tres datasets, intentaré abstraer las funcionalidades a métodos independientes.
 
 \subsection{Eliminación de variables con poca varianza}
-\image{Llamada a la función de eliminación de variables con poca varianza}{pl2/Figure_7.png}
-\image{Función de eliminación de variables con poca varianza}{pl2/Figure_7.1.png}
+\smallimage{Llamada a la función de eliminación de variables con poca varianza}{pl2/Figure_7.png}
+\smallimage{Función de eliminación de variables con poca varianza}{pl2/Figure_7.1.png}
 
 \section{Práctica 3: Longitud de un cable}
 En esta práctica se nos da una tabla cuyas filas representan distintas poblaciones con las siguientes características:
