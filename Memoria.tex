@@ -70,7 +70,8 @@ Tras cambiar al test de Wilcoxon:
 El p-valor es: $0.007531$ $\Rightarrow$ Son significativamente diferentes $\Rightarrow$ Se puede deducir que hay uno que es mejor.
 
 \subsubsection{Scipy 4}
-\image{Ajustando una distribución de Cauchy a los datos anteriores (curva roja)}{pl1/Figure_4.png}
+\paragraph{ARREGLAR IMAGEN}
+%\image{Ajustando una distribución de Cauchy a los datos anteriores (curva roja)}{pl1/Figure_4.png}
 Estimación kernel (ajuste automático de la distribución), que es una suma ponderada de los puntos en un entorno suave del punto en el que estoy, donde la ponderación depende de la distancia al punto. En otras palabras: Una convolución.
 
 \subsubsection{Scipy 5}
@@ -236,20 +237,154 @@ Además, 5NN (5-Nearest Neighbors) obtiene el mejor resultado en ambos casos. De
 
 \newpage
 \section{Práctica 2: Selección de características}
-En esta práctica tenemos tres datasets:
-\begin{itemize}
-\item iris
-\item letters
-\item X
-\end{itemize}
-
-X lo he convertido a un DataFrame (\code{pd.DataFrame(X)}) para poder manejarlo igual que los otros dos dataset.
+En esta práctica tenemos tres datasets: \textit{iris}, \textit{letter} y \textit{X}, que es un dataset generado con \texttt{\textit{make_classification}}, mientras que los dataset \textit{Iris} y \textit{Letter} se cargan a partir de un csv local. 
 
 Como en esta práctica habrá que repetir un mismo proceso para los tres datasets, intentaré abstraer las funcionalidades a métodos independientes.
 
 \subsection{Eliminación de variables con poca varianza}
+En las siguientes dos figuras podemos ver el uso de la función \texttt{\textit{drop_var}} (\href{https://github.com/uo272509/InteligenciaNegocioPL/blob/7f59f8fb2b83986595ab9083fa9a6d28ed39c67c/Prac2/helper.py\#L8}{helper.py\#L8}. 
 \smallimage{Llamada a la función de eliminación de variables con poca varianza}{pl2/Figure_7.png}
+
+Esta función:
+\begin{itemize}
+\item Descarta automáticamente la última columna (presuponiendo que es la de los resultados a predecir).
+\item Imprime por consola la varianza de cada columna del dataset mientras almacena la mayor varianza que encuentra.
+\item Crea un \texttt{\textit{VarianceThreshold}} del 10\% de la varianza máxima anteriormente obtenida.
+\item Hace un \texttt{\textit{fit_transform}} sobre el dataset reducido (sin la columna de los resultados).
+\item Imprime por consola la nueva varianza de cada columna.
+\item Devuelve el nuevo dataset.
+\end{itemize}
+
 \smallimage{Función de eliminación de variables con poca varianza}{pl2/Figure_7.1.png}
+
+\begin{center}
+\emph{Varianza de Iris}\\
+\begin{tabular}{|c|c|}
+\hline 
+Columna & Varianza\\ 
+\hline 
+sepal_length & 0.6857\\ 
+\hline
+sepal_width & 0.1880\\ 
+\hline
+petal_length & 3.1132\\ 
+\hline
+petal_width & 0.5824\\ 
+\hline 
+\end{tabular}\\
+
+\textit{El \texttt{VarianceThreshold} elimina la columna \textbf{sepal_width}}
+\end{center}
+
+
+\begin{center}
+\emph{Varianza de Letter}\\
+\begin{tabular}{|c|c|}
+\hline 
+Columna & Varianza\\ 
+\hline 
+x-box & 3.6604\\
+\hline
+y-box & 10.9201\\
+\hline
+width & 4.0585\\
+\hline
+high & 5.1139\\
+\hline
+onpix & 4.7981\\
+\hline
+x-bar & 4.1048\\
+\hline
+y-bar & 5.4073\\
+\hline
+x2bar & 7.2898\\
+\hline
+y2bar & 5.6683\\
+\hline
+xybar & 6.1925\\
+\hline
+x2ybr & 6.9225\\
+\hline
+xy2br & 4.3290\\
+\hline
+x-ege & 5.4407\\
+\hline
+xegvy & 2.3924\\
+\hline
+y-ege & 6.5899\\
+\hline
+yegvx & 2.6162\\
+\hline 
+\end{tabular}\\
+
+\textit{El \texttt{VarianceThreshold} no elimina ninguna columna}
+\end{center}
+
+
+\begin{center}
+\emph{Varianza de X}\\
+\begin{tabular}{|c|c|}
+\hline 
+Columna & Varianza\\ 
+\hline 
+0 & 2.1053\\ 
+\hline 
+1 & 1.1903\\ 
+\hline 
+2 & 1.9020\\ 
+\hline 
+3 & 1.0293\\ 
+\hline 
+4 & 1.0298\\ 
+\hline 
+5 & 1.0244\\ 
+\hline 
+6 & 1.0067\\ 
+\hline 
+7 & 0.9499\\ 
+\hline 
+8 & 0.9876\\ 
+\hline 
+\end{tabular}\\
+
+\textit{El \texttt{VarianceThreshold} no elimina ninguna columna}
+\end{center}
+
+\subsection{Eliminación de variables basada en estadísticos univariantes}
+Para esta sección hice la función \texttt{\textit{drop_stat_univar}} (\href{https://github.com/uo272509/InteligenciaNegocioPL/blob/7f59f8fb2b83986595ab9083fa9a6d28ed39c67c/Prac2/helper.py\#L32}{helper.py\#L32}. Al igual que antes, descarta la última columna asumiendo que son los resultados a predecir.
+
+Después:
+\begin{itemize}
+\item Imprime la varianza media del dataset antes de ser procesado.
+\item Usa \texttt{\textit{SelectKBest}} con \texttt{\textit{chi²}} para filtrar el dataset e imprime la nueva varianza.
+\item Usa \texttt{\textit{SelectPercentile}} con \texttt{\textit{chi²}} y percentil de 0.1 para filtrar el dataset original e imprime la nueva varianza.
+\end{itemize}
+
+Así obtenemos la siguiente tabla:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+Dataset & Varianza original & Varianza KBest & Varianza Percentile\\ 
+\hline 
+Iris & 1.14 & 1.84 & 3.09\\ 
+\hline
+Letter & 5.34 & 6.02 & 5.44 \\ 
+\hline 
+\end{tabular}
+\end{center}
+
+\subsection{Eliminación recursiva de variables}
+En este caso el estimador será \texttt{\textit{SVC}} con kernel \texttt{\textit{linear}}. Este estimador se lo pasamos al \texttt{\textit{RFECV}} (\textit{Recursive feature elimination with cross-validation to select features}), con un "step" y 5-fold (\texttt{\textit{cv=5}}) para la validación cruzada (\href{https://github.com/uo272509/InteligenciaNegocioPL/blob/7f59f8fb2b83986595ab9083fa9a6d28ed39c67c/Prac2/part1.py\#L51}{part1.py\#L51}).
+
+Seguidamente, hacemos un \texttt{\textit{fit}} sobre los datos y obtenemos el resultado.
+
+\subsection{Eliminación de variables usando SelectFromModel}
+Este apartado se encuentra en el archivo \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/7f59f8fb2b83986595ab9083fa9a6d28ed39c67c/Prac2/part2.py}{part2.py}.\\
+
+Para esta parte usamos \texttt{\textit{ExtraTreesClassifier}} para calcular la importancia de las distintas variables:
+\smallimage{Importancia de las variables según ExtraTreesClassifier}{pl2/Figure_8.png}
+
 
 \section{Práctica 3: Longitud de un cable}
 En esta práctica se nos da una tabla cuyas filas representan distintas poblaciones con las siguientes características:
