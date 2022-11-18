@@ -384,28 +384,61 @@ Este apartado se encuentra en el archivo \href{https://github.com/uo272509/Intel
 
 Para esta parte usamos \texttt{\textit{ExtraTreesClassifier}} para calcular la importancia de las distintas variables:
 \smallimage{Importancia de las variables según ExtraTreesClassifier}{pl2/Figure_8.png}
-
+\newpage
 
 \section{Práctica 3: Longitud de un cable}
 En esta práctica se nos da una tabla cuyas filas representan distintas poblaciones con las siguientes características:
-\begin{itemize}
-\item \textbf{N}: "Número de habitantes"
-\item \textbf{R}: "Radio de la población"
-\item \textit{Dos variables desconocidas}
-\item \textit{Dos variables aleatorias}
-\item \textbf{L}: "Longitud del cable" (la solución)
-\end{itemize}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline 
+Columna & Descripción\\ 
+\hline \textbf{N} & Número de habitantes\\
+\hline \textbf{R} & Radio de la población\\
+\hline \textbf{S} y \textbf{T} & \textit{Dos variables desconocidas}\\
+\hline \textbf{U} y \textbf{G} & \textit{Dos variables aleatorias}\\
+\hline \textbf{L} & Longitud del cable (la solución)\\
+\hline 
+\end{tabular}
+\end{center}
 
 \subsection{Valores perdidos}
-El primer paso es eliminar los valores perdidos. Podríamos tratar de inputar los valores, pero por ahora simplemente eliminaremos todas las filas que contengan valores perdidos con el comando \code{cables.dropna(how='any', inplace=True)}. Esta decisión nos costará 47 filas de 490 (9.59\% de filas).
+El primer paso es eliminar los valores perdidos. Podríamos tratar de inputar los valores, pero por ahora simplemente eliminaremos todas las filas que contengan valores perdidos (\href{https://github.com/uo272509/InteligenciaNegocioPL/blob/2cbbd80f0cc88aa40bd462bec7e322e89a958301/Prac3/main.py\#L69}{main.py\#L69}). Esta decisión nos costará 47 filas de 490 (9.59\% de filas).
 
 \subsection{Normalización de datos}
-A continuación tendremos que normalizar los datos. Simplemente usaré el \code{MinMaxScaler().fit_transform(...)}, que debería de hacer que todos los valores estén entre 0 y 1, agrupando por columnas (es decir, que se normaliza cada columna independientemente de las demás).
+A continuación tendremos que normalizar los datos. Simplemente usaré el \texttt{\textit{MinMaxScaler().fit_transform(...)}}, que debería de hacer que todos los valores estén entre 0 y 1, agrupando por columnas (es decir, que se normaliza cada columna independientemente de las demás).
 
-\subsection{Variables relevantes}
-El siguiente paso consiste en detectar las variables que son irrelevantes. He probado dos métodos para conseguir este fin: \code{SelectKBest(score_func=f_regression, k=...)} y \code{SelectPercentile(score_func=f_regression, percentile=0.1)}.
+Sin embargo, tendremos que guardar el máximo y el mínimo de la columna a predecir, para poder desnormalizar los valores a la hora de calcular el error.
 
-\subsection{LinearModel y SelectKBest}
+\subsection{Variables relevantes y Regresión}
+El siguiente paso consiste en detectar las variables que son irrelevantes. He probado dos métodos para conseguir este fin: 
+\begin{itemize}
+\item \texttt{\textit{SelectKBest(score_func=f_regression, k=...)}} $\rightarrow$ \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/2cbbd80f0cc88aa40bd462bec7e322e89a958301/Prac3/main.py\#L88}{main.py\#L88}
+\item \texttt{\textit{SelectPercentile(score_func=f_regression, percentile=0.1)}} $\rightarrow$ \href{https://github.com/uo272509/InteligenciaNegocioPL/blob/2cbbd80f0cc88aa40bd462bec7e322e89a958301/Prac3/main.py\#L89}{main.py\#L88}
+\end{itemize}
+
+Además, he probado \texttt{\textit{SelectKBest}} con \textit{\texttt{k=1, 2, ..., 5}}, obteniendo los siguientes resultados:
+
+\begin{center}
+\emph{Columnas que KBest elige, en función de \texttt{\textit{k}}}\\
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline k=... & N & R & S & T & U & G & L\\ 
+\hline 1 &  &  & X &  &  &  &  \\
+\hline 2 &  &  & X &  & X &  &  \\
+\hline 3 &  & X & X &  & X &  &  \\
+\hline 4 &  & X & X & X & X &  &  \\
+\hline 5 &  & X & X & X & X & X &  \\
+\hline 
+\end{tabular}
+\end{center}
+
+Por tanto, partimos del hecho de que KBest selecciona las columnas que menos correlación tienen con el problema. Serán las que tienen más varianza, pero desde luego no está seleccionando las columnas adecuadas. Aún así:
+
+\image{Error medio con KBest en función del \textit{\texttt{k}}}{pl3/Figure_8_Kbest_MeanError.png}
+
+Con Regresión Lineal y \texttt{\textit{k=1}}podemos llegar a obtener más de un 95\% de aciertos... Lo cual no tiene mucho sentido teniendo en cuenta que sólo tiene como parámetro S, que es una función desconocida.
+
+El error medio final que he obtenido ha sido \textbf{680.6916 metros} (\href{https://github.com/uo272509/InteligenciaNegocioPL/blob/2cbbd80f0cc88aa40bd462bec7e322e89a958301/Prac3/main.py\#L115}{main.py\#L115})
+\newpage
 
 \section{Práctica 4: Análisis gráfico de los datos}
 \subsection{K-Best y PCA}
